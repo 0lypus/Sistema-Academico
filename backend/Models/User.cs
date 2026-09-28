@@ -6,7 +6,7 @@ public abstract class User
     private int cuil;
     private DateTime dateOfBirth;
     private string location;
-    private int id_rol;
+    private int rol_id;
     private string email;
     private int cellphone;
     private int contactemergency;
@@ -19,7 +19,7 @@ public abstract class User
     public int Cuil {get {return cuil;} set {cuil = value;}}
     public DateTime DateOfBirth {get {return dateOfBirth;} set {dateOfBirth = value;}}
     public string Location {get {return location;} set {location = value;}}
-    public int IdRol {get {return id_rol;} set {id_rol = value;}}
+    public int IdRol {get {return rol_id;} set {rol_id = value;}}
     public string Email {get {return email;} set {email = value;}}
     public int Cellphone {get {return cellphone;} set {cellphone = value;}}
     public int ContactEmergency {get {return contactemergency;} set {contactemergency = value;}}
@@ -37,7 +37,7 @@ public abstract class User
         this.cuil = cuil;
         this.dateOfBirth = dateOfBirth;
         this.location = location;
-        this.id_rol = id_rol;
+        this.rol_id = id_rol;
         this.email = email;
         this.cellphone = cellphone;
         this.contactemergency = contactemergency;
