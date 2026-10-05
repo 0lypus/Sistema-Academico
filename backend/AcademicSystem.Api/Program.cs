@@ -1,3 +1,4 @@
+using AcademicSystem.Api; //(damian)
 using AcademicSystem.Business.Services;
 using AcademicSystem.Data.Context;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,9 @@ builder.Services.AddDbContext<AcademicSystemContext>(options => options.UseSqlSe
 
 // Business: each team registers its services here, one line per service.
 builder.Services.AddScoped<IHealthService, HealthService>();
+
+// Business: register the authentication service.(damian)
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Lets the React frontend (Vite, http://localhost:5173) call this API.
 const string FrontendCorsPolicy = "Frontend";
@@ -28,6 +32,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    DevelopmentSeeder.SeedLoginUsers(app.Services);//(damian)
 }
 else
 {
