@@ -21,4 +21,9 @@ public class UserRepository : IUserRepository
             .Include(u => u.AcademicSecretary)
             .FirstOrDefault(u => u.Email == email && u.IsActive);
     }
+
+    public void SaveChanges()
+    {
+        _context.SaveChanges();
+    }
 }
