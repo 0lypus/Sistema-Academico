@@ -13,7 +13,7 @@ const initialForm = {
   regimen: '',
 };
 
-function CrearPlanModal({ onClose, onCreate }) {
+function CreatePlanModal({ onClose, onCreate }) {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
 
@@ -192,4 +192,4 @@ function CrearPlanModal({ onClose, onCreate }) {
   );
 }
 
-export default CrearPlanModal;
+export default CreatePlanModal;

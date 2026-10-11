@@ -12,7 +12,7 @@ function Field({ label, value }) {
   );
 }
 
-function PlanDetalle({ plan, onBack }) {
+function PlanDetail({ plan, onBack }) {
   const [activeTab, setActiveTab] = useState('Resumen');
 
   const renderContent = () => {
@@ -102,4 +102,4 @@ function PlanDetalle({ plan, onBack }) {
   );
 }
 
-export default PlanDetalle;
+export default PlanDetail;
