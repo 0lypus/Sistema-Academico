@@ -1,6 +1,7 @@
 using AcademicSystem.Data.Context;
 using AcademicSystem.Business.Services;
 using AcademicSystem.Entities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ namespace AcademicSystem.Api.Controllers;
 
 [ApiController]
 [Route("api/users")]
+[Authorize(Roles = RoleNames.AcademicSecretary)]
 public class UsersController(AcademicSystemContext context) : ControllerBase
 {
     private readonly PasswordHasher<User> passwordHasher = new();

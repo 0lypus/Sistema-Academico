@@ -2,6 +2,7 @@ using System.Text.Json;
 using AcademicSystem.Business.Services;
 using AcademicSystem.Data.Context;
 using AcademicSystem.Entities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,7 @@ namespace AcademicSystem.Api.Controllers;
 
 [ApiController]
 [Route("api/academic-secretaries")]
+[Authorize(Roles = RoleNames.AcademicSecretary)]
 public class AcademicSecretariesController(AcademicSystemContext context) : ControllerBase
 {
     [HttpGet]
