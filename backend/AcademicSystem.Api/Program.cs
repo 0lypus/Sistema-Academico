@@ -21,6 +21,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 // Business: each team registers its services here, one line per service.
 builder.Services.AddScoped<IHealthService, HealthService>();
 builder.Services.AddScoped<IAuthService, AuthService>(); 
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>(); 
 
 // validacion del JWT. La clave vive en user-secrets, nunca en el repo.

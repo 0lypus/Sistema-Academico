@@ -1,5 +1,6 @@
 using AcademicSystem.Data.Context;
 using AcademicSystem.Business.Services;
+using AcademicSystem.Entities.DTOs;
 using AcademicSystem.Entities.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,22 +12,18 @@ namespace AcademicSystem.Api.Controllers;
 [ApiController]
 [Route("api/users")]
 [Authorize(Roles = RoleNames.AcademicSecretary)]
-public class UsersController(AcademicSystemContext context) : ControllerBase
+public class UsersController(AcademicSystemContext context, IUserService userService) : ControllerBase
 {
     private readonly PasswordHasher<User> passwordHasher = new();
 
     [HttpGet]
-    public async Task<IActionResult> GetAll(CancellationToken ct) =>
-        Ok(await context.Users.AsNoTracking().OrderBy(x => x.LastName).ThenBy(x => x.FirstName)
-            .Select(x => new { x.Id, x.FirstName, x.LastName, x.Cuil, x.BirthDate, x.Address, x.RoleId, RoleName = x.Role.Name,
-                x.Email, x.Phone, x.EmergencyContactPhone, x.IsActive }).ToListAsync(ct));
+    public async Task<ActionResult<List<UserResponseDto>>> GetAll(CancellationToken ct) =>
+        Ok(await userService.GetAllAsync(ct));
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById(int id, CancellationToken ct)
+    public async Task<ActionResult<UserResponseDto>> GetById(int id, CancellationToken ct)
     {
-        var user = await context.Users.AsNoTracking().Where(x => x.Id == id)
-            .Select(x => new { x.Id, x.FirstName, x.LastName, x.Cuil, x.BirthDate, x.Address, x.RoleId, RoleName = x.Role.Name,
-                x.Email, x.Phone, x.EmergencyContactPhone, x.IsActive }).SingleOrDefaultAsync(ct);
+        var user = await userService.GetByIdAsync(id, ct);
         return user is null ? NotFound() : Ok(user);
     }
 
