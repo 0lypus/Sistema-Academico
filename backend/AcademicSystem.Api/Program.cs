@@ -70,7 +70,6 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi().AllowAnonymous(); 
     try
     {
         DevelopmentSeeder.SeedLoginUsers(app.Services);
