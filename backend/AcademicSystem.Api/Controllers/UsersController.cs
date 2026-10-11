@@ -63,6 +63,9 @@ public class UsersController(AcademicSystemContext context) : ControllerBase
             return Conflict(new { message = "El usuario tiene perfil de estudiante y debe conservar el rol Student." });
         if (profile.HasSecretary && roleName != RoleNames.AcademicSecretary)
             return Conflict(new { message = "El usuario tiene perfil de secretario académico y debe conservar el rol AcademicSecretary." });
+        var dejaDeSerSecretarioActivo = !input.IsActive || roleName != RoleNames.AcademicSecretary;
+        if (dejaDeSerSecretarioActivo && await IsLastActiveSecretary(user, ct))
+            return Conflict(new { message = "No se puede desactivar ni cambiar de rol al último secretario activo." });
         var cuil = input.Cuil.Trim(); var email = input.Email.Trim();
         if (await context.Users.AnyAsync(x => x.Id != id && (x.Cuil == cuil || x.Email == email), ct)) return Conflict(new { message = "Otro usuario ya tiene ese CUIL o correo." });
         user.FirstName = input.FirstName.Trim(); user.LastName = input.LastName.Trim(); user.Cuil = cuil;
@@ -79,6 +82,8 @@ public class UsersController(AcademicSystemContext context) : ControllerBase
     {
         var user = await context.Users.SingleOrDefaultAsync(x => x.Id == id, ct);
         if (user is null) return NotFound();
+        if (await IsLastActiveSecretary(user, ct))
+            return Conflict(new { message = "No se puede dar de baja al último secretario activo." });
         user.IsActive = false;
         await context.SaveChangesAsync(ct);
         return NoContent();
@@ -94,6 +99,15 @@ public class UsersController(AcademicSystemContext context) : ControllerBase
         return null;
     }
     private static string? Clean(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+    private async Task<bool> IsLastActiveSecretary(User user, CancellationToken ct)
+    {
+        var esSecretario = await context.Roles.AnyAsync(r => r.Id == user.RoleId && r.Name == RoleNames.AcademicSecretary, ct);
+        if (!esSecretario || !user.IsActive) return false;
+        var otrosActivos = await context.Users.CountAsync(u => u.Id != user.Id && u.IsActive
+            && u.Role.Name == RoleNames.AcademicSecretary, ct);
+        return otrosActivos == 0;
+    }
+
     public sealed record UserInput(string FirstName, string LastName, string Cuil, DateOnly? BirthDate, string? Address,
         int RoleId, string Email, string? Phone, string? EmergencyContactPhone, string? Password, bool IsActive = true);
 }
