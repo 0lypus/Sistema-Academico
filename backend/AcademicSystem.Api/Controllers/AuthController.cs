@@ -66,7 +66,8 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Error interno del servidor: " + ex.Message);
+            _logger.LogError(ex, "Error inesperado durante el inicio de sesión");
+            return StatusCode(500, "Ocurrió un error inesperado. Intentá de nuevo más tarde.");
         }
     }
 }

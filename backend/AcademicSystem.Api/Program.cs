@@ -70,7 +70,14 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi().AllowAnonymous(); 
-    DevelopmentSeeder.SeedLoginUsers(app.Services);
+    try
+    {
+        DevelopmentSeeder.SeedLoginUsers(app.Services);
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogWarning(ex, "No se pudo ejecutar el seeder de desarrollo; la API seguirá iniciando.");
+    }
 }
 else
 {
