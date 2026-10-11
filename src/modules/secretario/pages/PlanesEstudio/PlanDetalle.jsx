@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, FileText, Plus } from 'lucide-react';
 
 const tabs = ['Resumen', 'Materias', 'Materias por año', 'Correlatividades'];
 
@@ -14,6 +14,50 @@ function Field({ label, value }) {
 
 function PlanDetalle({ plan, onBack }) {
   const [activeTab, setActiveTab] = useState('Resumen');
+
+  const renderContent = () => {
+    if (activeTab === 'Resumen') {
+      return (
+        <div className="plan-detalle-card">
+          <h2>Información del Plan</h2>
+          <div className="plan-detalle-grid">
+            <Field label="Nombre del plan" value={plan.nombre} />
+            <Field label="Código" value={plan.codigo} />
+            <Field label="Año de inicio del plan de estudio" value={plan.añoInicio} />
+            <Field label="Año de finalización del plan de estudio" value={plan.añoFin} />
+            <Field label="Duración de la carrera" value={plan.duracion} />
+            <Field label="Modalidad de la carrera" value={plan.modalidad} />
+            <Field label="Carga horaria total" value={plan.cargaHoraria} />
+            <Field label="Régimen de cursada" value={plan.regimen} />
+          </div>
+        </div>
+      );
+    }
+
+    if (activeTab === 'Materias') {
+      return (
+        <div className="plan-materias">
+          <h2>Materias</h2>
+          <p>Gestioná las materias asociadas al plan de estudio.</p>
+
+          <div className="plan-materias-empty">
+            <div className="plan-materias-icon"><FileText size={32} /></div>
+            <h3>Todavía no hay materias cargadas</h3>
+            <p>Agrega las materias para comenzar a organizar la estructura académica.</p>
+            <button type="button" className="create-plan-button">
+              <Plus size={14} /> Agregar materias
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="plan-detalle-card">
+        <p className="plans-empty">La sección "{activeTab}" todavía no está disponible.</p>
+      </div>
+    );
+  };
 
   return (
     <section className="plan-detalle-page">
@@ -30,10 +74,12 @@ function PlanDetalle({ plan, onBack }) {
             {plan.activo ? 'Activo' : 'Archivado'}
           </span>
         </div>
-        <div className="plan-detalle-actions">
-          <button type="button" className="plan-detalle-button">Editar</button>
-          <button type="button" className="plan-detalle-button">Archivar</button>
-        </div>
+        {activeTab === 'Resumen' && (
+          <div className="plan-detalle-actions">
+            <button type="button" className="plan-detalle-button">Editar</button>
+            <button type="button" className="plan-detalle-button">Archivar</button>
+          </div>
+        )}
       </div>
 
       <div className="plan-detalle-tabs" role="tablist">
@@ -51,25 +97,7 @@ function PlanDetalle({ plan, onBack }) {
         ))}
       </div>
 
-      {activeTab === 'Resumen' ? (
-        <div className="plan-detalle-card">
-          <h2>Información del Plan</h2>
-          <div className="plan-detalle-grid">
-            <Field label="Nombre del plan" value={plan.nombre} />
-            <Field label="Código" value={plan.codigo} />
-            <Field label="Año de inicio del plan de estudio" value={plan.añoInicio} />
-            <Field label="Año de finalización del plan de estudio" value={plan.añoFin} />
-            <Field label="Duración de la carrera" value={plan.duracion} />
-            <Field label="Modalidad de la carrera" value={plan.modalidad} />
-            <Field label="Carga horaria total" value={plan.cargaHoraria} />
-            <Field label="Régimen de cursada" value={plan.regimen} />
-          </div>
-        </div>
-      ) : (
-        <div className="plan-detalle-card">
-          <p className="plans-empty">La sección "{activeTab}" todavía no está disponible.</p>
-        </div>
-      )}
+      {renderContent()}
     </section>
   );
 }
