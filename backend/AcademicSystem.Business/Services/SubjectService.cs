@@ -2,6 +2,8 @@ using AcademicSystem.Entities.DTOs;
 using AcademicSystem.Entities.Models;
 using AcademicSystem.Data.Context;
 
+namespace AcademicSystem.Business.Services;
+
 public class SubjectService : ISubjectService
 {
     private readonly AcademicSystemContext _context;

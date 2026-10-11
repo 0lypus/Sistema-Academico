@@ -1,6 +1,9 @@
 using AcademicSystem.Entities.DTOs;
 using AcademicSystem.Entities.Models;
 using Microsoft.AspNetCore.Mvc;
+using AcademicSystem.Business.Services;
+
+namespace AcademicSystem.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -22,16 +25,23 @@ public class StudyPlanController : ControllerBase
         {
             List<StudyPlan> studyPlans = _studyPlanService.GetAll();
 
-            if (studyPlans.Count == 0)
+            return Ok(studyPlans.Select(sp => new StudyPlanResponseDto
             {
-                return NotFound("No existen planes de estudio.");
-            }
-
-            return Ok(studyPlans);
+                Id = sp.Id,
+                Name = sp.Name,
+                PlanCode = sp.PlanCode,
+                CareerDurationYears = sp.CareerDurationYears,
+                AttendanceMode = sp.AttendanceMode,
+                TotalWorkloadHours = sp.TotalWorkloadHours,
+                StartYear = sp.StartYear,
+                EndYear = sp.EndYear,
+                IsActive = sp.IsActive
+            }).ToList());
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Error interno del servidor: " + ex.Message);
+            _logger.LogError(ex, "Error inesperado");
+            return StatusCode(500, "Ocurrió un error inesperado. Intentá de nuevo más tarde.");
         }
     }
 
@@ -86,7 +96,8 @@ public class StudyPlanController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Error interno del servidor: " + ex.Message);
+            _logger.LogError(ex, "Error inesperado");
+            return StatusCode(500, "Ocurrió un error inesperado. Intentá de nuevo más tarde.");
         }
     }
 
@@ -148,7 +159,8 @@ public class StudyPlanController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Error interno del servidor: " + ex.Message);
+            _logger.LogError(ex, "Error inesperado");
+            return StatusCode(500, "Ocurrió un error inesperado. Intentá de nuevo más tarde.");
         }
     }
 
@@ -216,7 +228,8 @@ public class StudyPlanController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Error interno del servidor: " + ex.Message);
+            _logger.LogError(ex, "Error inesperado");
+            return StatusCode(500, "Ocurrió un error inesperado. Intentá de nuevo más tarde.");
         }
     }
 
@@ -230,9 +243,14 @@ public class StudyPlanController : ControllerBase
                 return BadRequest("Debe indicar la materia.");
             }
 
-            if (newPlanSubject.CourseYear <= 0)
+            if (newPlanSubject.CourseYear < 1 || newPlanSubject.CourseYear > 10)
             {
-                return BadRequest("Debe indicar un año de cursada válido.");
+                return BadRequest("El año de cursada tiene que estar entre 1 y 10.");
+            }
+
+            if (newPlanSubject.Term is not null && newPlanSubject.Term != 1 && newPlanSubject.Term != 2)
+            {
+                return BadRequest("El cuatrimestre tiene que ser 1, 2 o vacío si la materia es anual.");
             }
 
             if (!_studyPlanService.ExistsById(id))
@@ -283,7 +301,8 @@ public class StudyPlanController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Error interno del servidor: " + ex.Message);
+            _logger.LogError(ex, "Error inesperado");
+            return StatusCode(500, "Ocurrió un error inesperado. Intentá de nuevo más tarde.");
         }
     }
 }

@@ -1,5 +1,7 @@
 using AcademicSystem.Entities.Models;
 
+namespace AcademicSystem.Business.Services;
+
 public interface IStudyPlanService
 {
     List<StudyPlan> GetAll();

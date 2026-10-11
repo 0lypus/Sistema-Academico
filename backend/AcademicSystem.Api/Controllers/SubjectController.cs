@@ -1,6 +1,9 @@
 using AcademicSystem.Entities.DTOs;
 using AcademicSystem.Entities.Models;
 using Microsoft.AspNetCore.Mvc;
+using AcademicSystem.Business.Services;
+
+namespace AcademicSystem.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -22,16 +25,12 @@ public class SubjectController : ControllerBase
         {
             List<SubjectResponseDto> subjects = _subjectService.GetAll();
 
-            if (subjects.Count == 0)
-            {
-                return NotFound("No existen materias.");
-            }
-
             return Ok(subjects);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Error interno del servidor: " + ex.Message);
+            _logger.LogError(ex, "Error inesperado");
+            return StatusCode(500, "Ocurrió un error inesperado. Intentá de nuevo más tarde.");
         }
     }
 
@@ -62,7 +61,8 @@ public class SubjectController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Error interno del servidor: " + ex.Message);
+            _logger.LogError(ex, "Error inesperado");
+            return StatusCode(500, "Ocurrió un error inesperado. Intentá de nuevo más tarde.");
         }
     }
 
@@ -108,8 +108,8 @@ public class SubjectController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al crear la materia");
-            return StatusCode(500, "Error interno del servidor: " + ex.Message);
+            _logger.LogError(ex, "Error inesperado");
+            return StatusCode(500, "Ocurrió un error inesperado. Intentá de nuevo más tarde.");
         }
     }
 
@@ -160,7 +160,8 @@ public class SubjectController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Error interno del servidor: " + ex.Message);
+            _logger.LogError(ex, "Error inesperado");
+            return StatusCode(500, "Ocurrió un error inesperado. Intentá de nuevo más tarde.");
         }
     }
 }

@@ -2,6 +2,8 @@ using AcademicSystem.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using AcademicSystem.Data.Context;
 
+namespace AcademicSystem.Business.Services;
+
 public class StudyPlanService : IStudyPlanService
 {
     private readonly AcademicSystemContext _context;
