@@ -23,7 +23,7 @@ builder.Services.AddScoped<IHealthService, HealthService>();
 builder.Services.AddScoped<IAuthService, AuthService>(); 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>(); 
-
+builder.Services.AddScoped<IPermissionService, PermissionService>();
 // validacion del JWT. La clave vive en user-secrets, nunca en el repo.
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException("Falta 'Jwt:Key'. Configurala con user-secrets.");
