@@ -6,7 +6,8 @@ const ROL_FRONT = {
 export function rolFront(rolBackend) {
   return ROL_FRONT[rolBackend] ?? null;
 }
-
 export function rutaInicio(rol) {
-  return rol === 'secretario' ? '/secretario/inicio' : '/estudiante/inicio';
+  if (rol === 'secretario') return '/secretario/inicio';
+  if (rol === 'estudiante') return '/estudiante/inicio';
+  return '/login';
 }

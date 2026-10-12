@@ -4,6 +4,7 @@ import SimuladorRoles from '../components/SimuladorRoles';
 import { secretarioRoutes } from '../../modules/secretario/secretarioRoutes';
 import { estudianteRoutes } from '../../modules/estudiante/estudianteRoutes';
 import LoginPage from '../../modules/auth/pages/LoginPage';
+import AccesoDenegadoPage from '../../modules/auth/pages/AccesoDenegadoPage';
 import { obtenerSesion } from '../auth/session';
 import { rolFront, rutaInicio } from '../auth/roles';
 
@@ -14,9 +15,14 @@ function RutaProtegida() {
   return obtenerSesion() || simuladorActivo ? <Outlet /> : <Navigate to="/login" replace />;
 }
 
+function RutaPorRol({ rolRequerido, rolActual }) {
+  return rolActual === rolRequerido ? <Outlet /> : <AccesoDenegadoPage rol={rolActual} />;
+}
+
 function App() {
+  // El rol sale de la sesión. Solo con el simulador activo (desarrollo) se parte de "secretario".
   const [rolSimulado, setRolSimulado] = useState(
-    () => rolFront(obtenerSesion()?.role) ?? 'secretario',
+    () => rolFront(obtenerSesion()?.role) ?? (simuladorActivo ? 'secretario' : null),
   );
 
   const redireccionPorDefecto = <Navigate to={rutaInicio(rolSimulado)} replace />;
@@ -27,8 +33,13 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage onLogin={setRolSimulado} />} />
         <Route element={<RutaProtegida />}>
-          {secretarioRoutes(rolSimulado)}
-          {estudianteRoutes(rolSimulado)}
+          <Route element={<RutaPorRol rolRequerido="secretario" rolActual={rolSimulado} />}>
+            {secretarioRoutes(rolSimulado)}
+          </Route>
+          <Route element={<RutaPorRol rolRequerido="estudiante" rolActual={rolSimulado} />}>
+            {estudianteRoutes(rolSimulado)}
+          </Route>
+          <Route path="/403" element={<AccesoDenegadoPage rol={rolSimulado} />} />
         </Route>
         <Route path="*" element={redireccionPorDefecto} />
       </Routes>
