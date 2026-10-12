@@ -337,6 +337,7 @@ En el backend, cada equipo agrega sus endpoints en `backend/AcademicSystem.Api/C
 
 **De la cátedra**
 
+- [Guía del proyecto](documentos/guia-del-proyecto.md) — estructura de carpetas, arquitectura, funcionalidades actuales y puesta en marcha técnica.
 - [Sistema Académico](documentos/Sistema%20Acad%C3%A9mico.md) — qué tiene que hacer el sistema.
 - [Equipos Proyectos 2do](documentos/Equipos%20Proyectos%202do.md) — integrantes y responsabilidades de cada equipo.
 - [continuacion.md](documentos/continuacion.md) — arquitectura del proyecto y convenciones de código.
