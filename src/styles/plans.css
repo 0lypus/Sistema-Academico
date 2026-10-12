@@ -155,7 +155,6 @@
   color: var(--color-muted);
 }
 
-/* ===== Detalles (duración, modalidad, etc.) ===== */
 .plan-card-details {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -188,7 +187,6 @@
   color: var(--color-text);
 }
 
-/* ===== Botones de la tarjeta ===== */
 .plan-card-footer {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -377,14 +375,21 @@
   padding: 8px 14px;
 }
 
-.plan-materias>h2 {
+.plan-materias-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.plan-materias h2 {
   margin: 0 0 4px;
   font-size: 15px;
   font-weight: 600;
   color: var(--color-text);
 }
 
-.plan-materias>p {
+.plan-materias-header p {
   margin: 0 0 24px;
   font-size: 10px;
   color: var(--color-muted);
@@ -429,8 +434,137 @@
   color: var(--color-muted);
 }
 
-/* ===== Responsive ===== */
+.plan-materias-list {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
 
+.plan-materias-list-row {
+  display: grid;
+  grid-template-columns: 50px 110px minmax(160px, 1fr) 60px 110px 90px 90px;
+  gap: 8px;
+  min-width: 700px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 11px;
+  color: var(--color-text);
+}
+
+.plan-materias-list-row:last-child {
+  border-bottom: none;
+}
+
+.plan-materias-list-head {
+  background: #e3ede4;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* ===== Cargar materias ===== */
+.cargar-materias-heading {
+  margin: 30px 0 28px 8px;
+}
+
+.cargar-materias-heading h1 {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.cargar-materias-heading p {
+  margin: 0;
+  font-size: 10px;
+  color: var(--color-muted);
+}
+
+.cargar-materias-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.cargar-materias-table {
+  min-width: 900px;
+}
+
+.cargar-materias-row {
+  display: grid;
+  grid-template-columns: 70px 120px minmax(180px, 1fr) 70px 90px 130px 100px 70px;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cargar-materias-row:last-child {
+  border-bottom: none;
+}
+
+.cargar-materias-head {
+  padding: 14px 8px;
+  background: #e3ede4;
+  font-size: 10px;
+  color: var(--color-text);
+  text-align: center;
+}
+
+.cargar-materias-row input,
+.cargar-materias-row select {
+  width: 100%;
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 10px;
+  font-family: inherit;
+  outline: none;
+}
+
+.cargar-materias-row input::placeholder {
+  color: var(--color-muted);
+  opacity: 0.7;
+}
+
+.cargar-materias-row input:focus,
+.cargar-materias-row select:focus {
+  border-color: var(--color-primary);
+}
+
+.cargar-materias-delete {
+  display: grid;
+  place-items: center;
+  justify-self: center;
+  border: none;
+  background: none;
+  color: #c0392b;
+  cursor: pointer;
+}
+
+.cargar-materias-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 16px;
+}
+
+.cargar-materias-error {
+  margin: 12px 0 0;
+}
+
+.cargar-materias-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+/* ===== Responsive ===== */
 @media (max-width: 800px) {
   .plans-grid {
     grid-template-columns: 1fr;

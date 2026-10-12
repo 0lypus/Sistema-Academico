@@ -1,6 +1,6 @@
-import '../../../../styles/modal.css';
 import { useState } from 'react';
 import { FileText, X } from 'lucide-react';
+import '../../../../styles/modal.css';
 
 const initialForm = {
   nombre: '',
@@ -13,7 +13,7 @@ const initialForm = {
   regimen: '',
 };
 
-function CreatePlanModal({ onClose, onCreate }) {
+function CrearPlanModal({ onClose, onCreate }) {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
 
@@ -192,4 +192,4 @@ function CreatePlanModal({ onClose, onCreate }) {
   );
 }
 
-export default CreatePlanModal;
+export default CrearPlanModal;

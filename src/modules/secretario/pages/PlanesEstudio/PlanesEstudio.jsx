@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Plus, X } from 'lucide-react';
 import PlanCard from './PlanCard';
-import CrearPlanModal from './CrearPlanModal';
-import PlanDetalle from './PlanDetalle';
+import CrearPlanModal from './CreatePlanModal';
+import PlanDetalle from './PlanDetail';
 import { plansApi } from '../../components/plans/plansApi';
 import { useAsyncResource } from '../../../../hooks/useAsyncResource';
 

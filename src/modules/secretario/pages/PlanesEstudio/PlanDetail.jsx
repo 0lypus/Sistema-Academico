@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ChevronRight, FileText, Plus } from 'lucide-react';
+import CargarMaterias from './LoadSubjects';
 
 const tabs = ['Resumen', 'Materias', 'Materias por año', 'Correlatividades'];
 
@@ -12,8 +13,26 @@ function Field({ label, value }) {
   );
 }
 
-function PlanDetail({ plan, onBack }) {
+function PlanDetalle({ plan, onBack }) {
   const [activeTab, setActiveTab] = useState('Resumen');
+  const [isLoadingSubjects, setIsLoadingSubjects] = useState(false);
+  const [materias, setMaterias] = useState([]);
+
+  const handleSaveSubjects = (newSubjects) => {
+    setMaterias((current) => [...current, ...newSubjects]);
+    setIsLoadingSubjects(false);
+  };
+
+  if (isLoadingSubjects) {
+    return (
+      <CargarMaterias
+        plan={plan}
+        onBack={onBack}
+        onCancel={() => setIsLoadingSubjects(false)}
+        onSave={handleSaveSubjects}
+      />
+    );
+  }
 
   const renderContent = () => {
     if (activeTab === 'Resumen') {
@@ -37,17 +56,53 @@ function PlanDetail({ plan, onBack }) {
     if (activeTab === 'Materias') {
       return (
         <div className="plan-materias">
-          <h2>Materias</h2>
-          <p>Gestioná las materias asociadas al plan de estudio.</p>
-
-          <div className="plan-materias-empty">
-            <div className="plan-materias-icon"><FileText size={32} /></div>
-            <h3>Todavía no hay materias cargadas</h3>
-            <p>Agrega las materias para comenzar a organizar la estructura académica.</p>
-            <button type="button" className="create-plan-button">
-              <Plus size={14} /> Agregar materias
-            </button>
+          <div className="plan-materias-header">
+            <div>
+              <h2>Materias</h2>
+              <p>Gestioná las materias asociadas al plan de estudio.</p>
+            </div>
+            {materias.length > 0 && (
+              <button type="button" className="create-plan-button" onClick={() => setIsLoadingSubjects(true)}>
+                <Plus size={14} /> Agregar materias
+              </button>
+            )}
           </div>
+
+          {materias.length === 0 ? (
+            <div className="plan-materias-empty">
+              <div className="plan-materias-icon"><FileText size={32} /></div>
+              <h3>Todavía no hay materias cargadas</h3>
+              <p>Agrega las materias para comenzar a organizar la estructura académica.</p>
+              <button type="button" className="create-plan-button" onClick={() => setIsLoadingSubjects(true)}>
+                <Plus size={14} /> Agregar materias
+              </button>
+            </div>
+          ) : (
+            <div className="plan-materias-list">
+              <div className="plan-materias-list-row plan-materias-list-head">
+                <span>N.º</span>
+                <span>Formato</span>
+                <span>Materia</span>
+                <span>Año</span>
+                <span>Régimen</span>
+                <span>Hs. cátedra</span>
+                <span>Hs. reloj</span>
+              </div>
+              {[...materias]
+                .sort((a, b) => Number(a.orden) - Number(b.orden))
+                .map((materia) => (
+                  <div className="plan-materias-list-row" key={materia.id}>
+                    <span>{materia.orden}</span>
+                    <span>{materia.formato}</span>
+                    <span>{materia.materia}</span>
+                    <span>{materia.anio}</span>
+                    <span>{materia.regimen}</span>
+                    <span>{materia.horasCatedra}</span>
+                    <span>{materia.horasReloj}</span>
+                  </div>
+                ))}
+            </div>
+          )}
         </div>
       );
     }
@@ -102,4 +157,4 @@ function PlanDetail({ plan, onBack }) {
   );
 }
 
-export default PlanDetail;
+export default PlanDetalle;

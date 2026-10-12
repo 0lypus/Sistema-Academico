@@ -1,12 +1,12 @@
 import { useRef, useState } from 'react';
 import { ChevronRight, Plus, Trash2 } from 'lucide-react';
 
-const FORMATOS = ['Asignatura', 'Taller', 'Seminario', 'Laboratorio', 'Módulo'];
-const ANIOS = ['1°', '2°', '3°', '4°', '5°'];
+const FORMATOS = ['Asignatura', 'Taller'];
+const ANIOS = ['1°', '2°', '3°'];
 const REGIMENES = ['Anual', 'Cuatrimestral'];
 const INITIAL_ROWS = 5;
 
-function LoadSubjects({ plan, onBack, onCancel, onSave }) {
+function CargarMaterias({ plan, onBack, onCancel, onSave }) {
   const nextId = useRef(INITIAL_ROWS);
   const createRow = (id) => ({
     id,
@@ -36,7 +36,6 @@ function LoadSubjects({ plan, onBack, onCancel, onSave }) {
   };
 
   const handleSubmit = () => {
-    // Se ignoran las filas completamente vacías
     const filledRows = rows.filter((row) => Object.entries(row).some(([key, value]) => key !== 'id' && value !== ''));
 
     if (filledRows.length === 0) {
@@ -117,4 +116,4 @@ function LoadSubjects({ plan, onBack, onCancel, onSave }) {
   );
 }
 
-export default LoadSubjects;
+export default CargarMaterias;
