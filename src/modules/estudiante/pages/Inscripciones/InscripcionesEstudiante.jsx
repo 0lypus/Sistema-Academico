@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CalendarDays, ChevronRight } from 'lucide-react';
+import { CalendarDays, ChevronRight, FileText, Lock, CheckCircle2, ListChecks } from 'lucide-react';
 import MateriaInscripcionRow from './components/MateriaInscripcionRow';
 
 const MES_ACTUAL_SIMULADO = 'Marzo';
@@ -17,7 +17,31 @@ const FILTROS = [
   { id: 'todas', label: 'Todas' },
   { id: 'habilitadas', label: 'Habilitadas' },
   { id: 'bloqueadas', label: 'Bloqueadas' },
+  { id: 'aprobadas', label: 'Aprobadas' },
 ];
+
+const ESTADOS_VACIOS = {
+  todas: {
+    icono: FileText,
+    titulo: 'Todavía no hay materias',
+    texto: 'Cuando las materias estén cargadas aparecerán acá',
+  },
+  habilitadas: {
+    icono: ListChecks,
+    titulo: 'No hay materias habilitadas',
+    texto: 'Cuando cumplas las correlatividades de una materia aparecerá acá',
+  },
+  bloqueadas: {
+    icono: Lock,
+    titulo: 'No tenés materias bloqueadas',
+    texto: 'Cumpliste las correlatividades de todas tus materias',
+  },
+  aprobadas: {
+    icono: CheckCircle2,
+    titulo: 'Todavía no tenés materias aprobadas',
+    texto: 'Cuando apruebes una materia aparecerá acá',
+  },
+};
 
 const MATERIAS = [
   { id: 1, nombre: 'Programación I', año: 1, regimen: 'Anual', estado: 'A', correlativas: [] },
@@ -42,10 +66,18 @@ function InscripcionesEstudiante() {
   });
 
   const materiasFiltradas = materiasPreparadas.filter((materia) => {
-    if (filtro === 'habilitadas') return !materia.correlativaBloqueante;
-    if (filtro === 'bloqueadas') return !!materia.correlativaBloqueante;
+    const aprobada = materia.estado === 'A';
+    const inscripta = materia.estado === 'R';
+    const bloqueada = !!materia.correlativaBloqueante && !aprobada && !inscripta;
+
+    if (filtro === 'aprobadas') return aprobada;
+    if (filtro === 'habilitadas') return !bloqueada && !aprobada;
+    if (filtro === 'bloqueadas') return bloqueada;
     return true;
   });
+
+  const estadoVacio = ESTADOS_VACIOS[filtro];
+  const IconoVacio = estadoVacio.icono;
 
   const handleInscripcion = (materiaId) => {
     setMaterias((actuales) =>
@@ -72,7 +104,6 @@ function InscripcionesEstudiante() {
         <div>
           <h1>Inscripciones a materias</h1>
           <p>Consulta las materias disponibles para inscribirse</p>
-          
         </div>
         <div className="periodo-card">
           <CalendarDays size={38} />
@@ -97,7 +128,6 @@ function InscripcionesEstudiante() {
           </button>
         </div>
       )}
-      
 
       <div className="tabs-bar">
         <div className="tabs" role="tablist">
@@ -117,31 +147,41 @@ function InscripcionesEstudiante() {
         <span className="tabs-contador">{materiasFiltradas.length} Materias</span>
       </div>
 
-      <div className="tabla-wrapper">
-        <table className="tabla-materias">
-          <thead>
-            <tr>
-              <th>Materias</th>
-              <th>Año</th>
-              <th>Régimen</th>
-              <th>Correlativas</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {materiasFiltradas.map((materia) => (
-              <MateriaInscripcionRow
-                key={materia.id}
-                materia={materia}
-                periodoAbierto={periodoAbierto}
-                onInscribir={handleInscripcion}
-                onVerDetalle={handleVerDetalle}
-              />
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {materiasFiltradas.length === 0 ? (
+        <div className="estado-vacio" role="status">
+          <div className="estado-vacio__icono">
+            <IconoVacio size={32} />
+          </div>
+          <h2>{estadoVacio.titulo}</h2>
+          <p>{estadoVacio.texto}</p>
+        </div>
+      ) : (
+        <div className="tabla-wrapper">
+          <table className="tabla-materias">
+            <thead>
+              <tr>
+                <th>Materias</th>
+                <th>Año</th>
+                <th>Régimen</th>
+                <th>Correlativas</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {materiasFiltradas.map((materia) => (
+                <MateriaInscripcionRow
+                  key={materia.id}
+                  materia={materia}
+                  periodoAbierto={periodoAbierto}
+                  onInscribir={handleInscripcion}
+                  onVerDetalle={handleVerDetalle}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </section>
   );
 }
