@@ -3,6 +3,7 @@ import { ChevronRight, FileText, Plus } from 'lucide-react';
 import CargarMaterias from './LoadSubjects';
 
 const tabs = ['Resumen', 'Materias', 'Materias por año', 'Correlatividades'];
+const YEARS = ['1°', '2°', '3°'];
 
 function Field({ label, value }) {
   return (
@@ -17,6 +18,7 @@ function PlanDetalle({ plan, onBack }) {
   const [activeTab, setActiveTab] = useState('Resumen');
   const [isLoadingSubjects, setIsLoadingSubjects] = useState(false);
   const [materias, setMaterias] = useState([]);
+  const [selectedYear, setSelectedYear] = useState('1°');
 
   const handleSaveSubjects = (newSubjects) => {
     setMaterias((current) => [...current, ...newSubjects]);
@@ -103,6 +105,58 @@ function PlanDetalle({ plan, onBack }) {
                 ))}
             </div>
           )}
+        </div>
+      );
+    }
+
+    if (activeTab === 'Materias por año') {
+      const countByYear = (year) => materias.filter((materia) => materia.anio === year).length;
+      const subjectsOfYear = materias
+        .filter((materia) => materia.anio === selectedYear)
+        .sort((a, b) => Number(a.orden) - Number(b.orden));
+
+      return (
+        <div className="plan-materias">
+          <h2>Materias por año</h2>
+          <p className="plan-materias-subtitle">Visualiza las materias que conforman cada año del plan de estudio.</p>
+
+          <div className="year-tabs">
+            {YEARS.map((year) => {
+              const count = countByYear(year);
+              return (
+                <button
+                  key={year}
+                  type="button"
+                  className={`year-tab ${selectedYear === year ? 'active' : ''}`}
+                  onClick={() => setSelectedYear(year)}
+                >
+                  <strong>{year.replace('°', '.° Año')}</strong>
+                  <span>{count} {count === 1 ? 'materia' : 'materias'}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="year-subjects">
+            <div className="year-subjects-row year-subjects-head">
+              <span>N.º orden</span>
+              <span>Formato</span>
+              <span>Materia</span>
+              <span>Régimen</span>
+            </div>
+            {subjectsOfYear.length === 0 ? (
+              <p className="year-subjects-empty">No hay materias cargadas para este año.</p>
+            ) : (
+              subjectsOfYear.map((materia) => (
+                <div className="year-subjects-row" key={materia.id}>
+                  <span>{materia.orden}</span>
+                  <span>{materia.formato}</span>
+                  <span>{materia.materia}</span>
+                  <span>{materia.regimen}</span>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       );
     }

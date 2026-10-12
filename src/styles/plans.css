@@ -564,6 +564,88 @@
   margin-top: 28px;
 }
 
+/* ===== Materias por año ===== */
+.plan-materias-subtitle {
+  margin: 0 0 28px;
+  font-size: 10px;
+  color: var(--color-muted);
+}
+
+.year-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.year-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 150px;
+  padding: 12px 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.year-tab strong {
+  font-size: 12px;
+}
+
+.year-tab span {
+  font-size: 9px;
+  color: var(--color-muted);
+}
+
+.year-tab.active {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.year-tab.active span {
+  color: var(--color-surface);
+}
+
+.year-subjects {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.year-subjects-row {
+  display: grid;
+  grid-template-columns: 90px 160px minmax(200px, 1fr) 140px;
+  align-items: center;
+  min-width: 600px;
+  padding: 16px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 10px;
+  text-align: center;
+  color: var(--color-text);
+}
+
+.year-subjects-row:last-child {
+  border-bottom: none;
+}
+
+.year-subjects-head {
+  background: #e3ede4;
+  font-size: 10px;
+}
+
+.year-subjects-empty {
+  margin: 0;
+  padding: 28px 16px;
+  font-size: 11px;
+  text-align: center;
+  color: var(--color-muted);
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 800px) {
   .plans-grid {
