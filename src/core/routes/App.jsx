@@ -7,11 +7,13 @@ import LoginPage from '../../modules/auth/pages/LoginPage';
 import AccesoDenegadoPage from '../../modules/auth/pages/AccesoDenegadoPage';
 import { obtenerSesion } from '../auth/session';
 import { rolFront, rutaInicio } from '../auth/roles';
+import { useExpiracionSesion } from '../auth/useExpiracionSesion';
 
 const simuladorActivo = import.meta.env.DEV && import.meta.env.VITE_ENABLE_ROLE_SIMULATOR === 'true';
 
 function RutaProtegida() {
   useLocation();
+  useExpiracionSesion();
   return obtenerSesion() || simuladorActivo ? <Outlet /> : <Navigate to="/login" replace />;
 }
 

@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import { AlertCircle, ArrowRight, Eye, EyeOff, Lock, User } from 'lucide-react';
+import { AlertCircle, ArrowRight, Clock, Eye, EyeOff, Lock, User } from 'lucide-react';
 import { login } from '../../../api/authApi';
 import { guardarSesion } from '../../../core/auth/session';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { rolFront, rutaInicio } from '../../../core/auth/roles';
 
 function LoginPage({ onLogin }) {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const sesionExpirada = searchParams.get('motivo') === 'expirada';
   const [usuario, setUsuario] = useState('');
   const [password, setPassword] = useState('');
   const [verPassword, setVerPassword] = useState(false);
@@ -62,6 +64,12 @@ function LoginPage({ onLogin }) {
           <h1>Iniciar sesión</h1>
           <p className="login__sub">Ingresá con tu usuario institucional para continuar.</p>
 
+          {sesionExpirada && !errorGeneral && (
+            <div className="login__aviso" role="status">
+              <Clock size={18} /> Tu sesión expiró. Ingresá de nuevo para continuar.
+            </div>
+          )}
+          
           {errorGeneral && (
             <div className="login__alerta" role="alert">
               <AlertCircle size={18} /> {errorGeneral}
