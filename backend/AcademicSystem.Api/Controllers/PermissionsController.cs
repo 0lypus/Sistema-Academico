@@ -20,7 +20,7 @@ public class PermissionsController(IPermissionService permissionService) : Contr
         var role = User.FindFirst("role")?.Value;
         var permissions = role is null ? null : permissionService.GetByRole(role);
 
-        // Sin token responde 401 solo (FallbackPolicy). Rol fuera de la matriz: 403.
+       
         return permissions is null ? Forbid() : Ok(permissions);
     }
 }
