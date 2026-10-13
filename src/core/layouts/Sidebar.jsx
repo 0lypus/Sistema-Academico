@@ -2,7 +2,7 @@ import { BookOpen, ChevronRight, ClipboardList, GraduationCap, Grid2X2, LogOut, 
 import { NavLink, useNavigate } from 'react-router-dom';
 import icgbLogo from '../../assets/icgb-logo.svg';
 import { cerrarSesion } from '../auth/session';
-import { menuParaRol } from '../auth/permisos';
+import { menuParaRol } from '../auth/permisos,js';
 
 const ICONS = { Grid2X2, GraduationCap, ClipboardList, Users, UserRound, BookOpen, ShieldCheck };
 
