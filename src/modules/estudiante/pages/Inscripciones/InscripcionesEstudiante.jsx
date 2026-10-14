@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CalendarDays, ChevronRight, FileText, Lock, CheckCircle2, ListChecks } from 'lucide-react';
 import MateriaInscripcionRow from './components/MateriaInscripcionRow';
+import ModalConfirmarInscripcion from './components/ModalConfirmarInscripcion';
+import ModalDetalleMateria from './components/ModalDetalleMateria';
 
 const MES_ACTUAL_SIMULADO = 'Marzo';
 const PERIODO_DE_INSCRIPCION = 'Marzo';
@@ -43,6 +45,9 @@ const ESTADOS_VACIOS = {
   },
 };
 
+const ORDINALES = { 1: '1ro', 2: '2do', 3: '3ro', 4: '4to', 5: '5to' };
+const formatearAnio = (anio) => ORDINALES[anio] ?? `${anio}°`;
+
 const MATERIAS = [
   { id: 1, nombre: 'Programación I', año: 1, regimen: 'Anual', estado: 'A', correlativas: [] },
   { id: 2, nombre: 'Base de Datos', año: 1, regimen: '1er Cuatrimestre', estado: 'R', correlativas: [] },
@@ -55,14 +60,20 @@ function InscripcionesEstudiante() {
   const [materias, setMaterias] = useState(MATERIAS);
   const [aviso, setAviso] = useState('');
   const [filtro, setFiltro] = useState('todas');
+  const [modal, setModal] = useState(null); // { tipo: 'confirmar' | 'detalle', materiaId }
   const periodoAbierto = MES_ACTUAL_SIMULADO === PERIODO_DE_INSCRIPCION;
 
   const materiasPreparadas = materias.map((materia) => {
-    const correlativaBloqueante = materia.correlativas
+    const correlativasPendientes = materia.correlativas
       .map((correlativaId) => materias.find(({ id }) => id === correlativaId))
-      .find((correlativa) => correlativa && correlativa.estado !== 'R' && correlativa.estado !== 'A');
+      .filter((correlativa) => correlativa && correlativa.estado !== 'A')
+      .map((correlativa) => correlativa.nombre);
 
-    return { ...materia, correlativaBloqueante: correlativaBloqueante?.nombre };
+    return {
+      ...materia,
+      correlativasPendientes,
+      correlativaBloqueante: correlativasPendientes[0],
+    };
   });
 
   const materiasFiltradas = materiasPreparadas.filter((materia) => {
@@ -79,17 +90,19 @@ function InscripcionesEstudiante() {
   const estadoVacio = ESTADOS_VACIOS[filtro];
   const IconoVacio = estadoVacio.icono;
 
-  const handleInscripcion = (materiaId) => {
-    setMaterias((actuales) =>
-      actuales.map((materia) => (materia.id === materiaId ? { ...materia, estado: 'R' } : materia))
-    );
-    const materia = materias.find(({ id }) => id === materiaId);
-    if (materia) setAviso(`Solicitud de inscripción registrada para ${materia.nombre}.`);
-  };
+  const materiaModal = modal ? materiasPreparadas.find(({ id }) => id === modal.materiaId) : null;
 
-  const handleVerDetalle = (materiaId) => {
-    const materia = materiasPreparadas.find(({ id }) => id === materiaId);
-    if (materia) setAviso(`${materia.nombre} requiere la correlativa: ${materia.correlativaBloqueante}.`);
+  const cerrarModal = () => setModal(null);
+  const abrirConfirmacion = (materiaId) => setModal({ tipo: 'confirmar', materiaId });
+  const abrirDetalle = (materiaId) => setModal({ tipo: 'detalle', materiaId });
+
+  const handleConfirmarInscripcion = () => {
+    if (!materiaModal) return;
+    setMaterias((actuales) =>
+      actuales.map((materia) => (materia.id === materiaModal.id ? { ...materia, estado: 'R' } : materia))
+    );
+    setAviso(`Te has inscripto a la materia: ${materiaModal.nombre}.`);
+    cerrarModal();
   };
 
   return (
@@ -174,13 +187,30 @@ function InscripcionesEstudiante() {
                   key={materia.id}
                   materia={materia}
                   periodoAbierto={periodoAbierto}
-                  onInscribir={handleInscripcion}
-                  onVerDetalle={handleVerDetalle}
+                  onInscribir={abrirConfirmacion}
+                  onVerDetalle={abrirDetalle}
                 />
               ))}
             </tbody>
           </table>
         </div>
+      )}
+
+      {materiaModal && modal.tipo === 'confirmar' && (
+        <ModalConfirmarInscripcion
+          materia={materiaModal}
+          anioTexto={formatearAnio(materiaModal.año)}
+          onConfirmar={handleConfirmarInscripcion}
+          onCancelar={cerrarModal}
+        />
+      )}
+
+      {materiaModal && modal.tipo === 'detalle' && (
+        <ModalDetalleMateria
+          materia={materiaModal}
+          anioTexto={formatearAnio(materiaModal.año)}
+          onCerrar={cerrarModal}
+        />
       )}
     </section>
   );
