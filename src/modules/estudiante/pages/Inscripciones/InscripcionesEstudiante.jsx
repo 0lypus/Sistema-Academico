@@ -4,16 +4,10 @@ import { CalendarDays, ChevronRight, FileText, Lock, CheckCircle2, ListChecks } 
 import MateriaInscripcionRow from './components/MateriaInscripcionRow';
 import ModalConfirmarInscripcion from './components/ModalConfirmarInscripcion';
 import ModalDetalleMateria from './components/ModalDetalleMateria';
+import { useInscripciones, PERIODO_TEXTO } from './context/InscripcionesContext';
 
 const MES_ACTUAL_SIMULADO = 'Marzo';
 const PERIODO_DE_INSCRIPCION = 'Marzo';
-const PERIODO_TEXTO = '10 mar. - 28 mar. 2025';
-
-const ESTUDIANTE = {
-  nombre: 'Lucas Fernández',
-  plan: 'Plan Tec. en Programación 2026',
-  legajo: '2026-0148',
-};
 
 const FILTROS = [
   { id: 'todas', label: 'Todas' },
@@ -31,7 +25,7 @@ const ESTADOS_VACIOS = {
   habilitadas: {
     icono: ListChecks,
     titulo: 'No hay materias habilitadas',
-    texto: 'Cuando cumplas las correlatividades de una materia aparecerá acá',
+    texto: 'Cuando hayan materias disponibles aparecerán acá',
   },
   bloqueadas: {
     icono: Lock,
@@ -48,38 +42,19 @@ const ESTADOS_VACIOS = {
 const ORDINALES = { 1: '1ro', 2: '2do', 3: '3ro', 4: '4to', 5: '5to' };
 const formatearAnio = (anio) => ORDINALES[anio] ?? `${anio}°`;
 
-const MATERIAS = [
-  { id: 1, nombre: 'Programación I', año: 1, regimen: 'Anual', estado: 'A', correlativas: [] },
-  { id: 2, nombre: 'Base de Datos', año: 1, regimen: '1er Cuatrimestre', estado: 'R', correlativas: [] },
-  { id: 3, nombre: 'Programación II', año: 2, regimen: 'Anual', estado: '', correlativas: [1] },
-  { id: 4, nombre: 'Ingeniería de Software', año: 2, regimen: 'Anual', estado: '', correlativas: [2] },
-  { id: 5, nombre: 'Desarrollo Web', año: 2, regimen: '2do Cuatrimestre', estado: '', correlativas: [3, 4] },
-];
-
 function InscripcionesEstudiante() {
-  const [materias, setMaterias] = useState(MATERIAS);
+  const { materiasPreparadas, inscribir } = useInscripciones();
   const [aviso, setAviso] = useState('');
   const [filtro, setFiltro] = useState('todas');
   const [modal, setModal] = useState(null); // { tipo: 'confirmar' | 'detalle', materiaId }
   const periodoAbierto = MES_ACTUAL_SIMULADO === PERIODO_DE_INSCRIPCION;
 
-  const materiasPreparadas = materias.map((materia) => {
-    const correlativasPendientes = materia.correlativas
-      .map((correlativaId) => materias.find(({ id }) => id === correlativaId))
-      .filter((correlativa) => correlativa && correlativa.estado !== 'A')
-      .map((correlativa) => correlativa.nombre);
+  // Las materias inscriptas (estado 'R') se ven en "Mis Inscripciones", no acá
+  const materiasDisponibles = materiasPreparadas.filter((materia) => materia.estado !== 'R');
 
-    return {
-      ...materia,
-      correlativasPendientes,
-      correlativaBloqueante: correlativasPendientes[0],
-    };
-  });
-
-  const materiasFiltradas = materiasPreparadas.filter((materia) => {
+  const materiasFiltradas = materiasDisponibles.filter((materia) => {
     const aprobada = materia.estado === 'A';
-    const inscripta = materia.estado === 'R';
-    const bloqueada = !!materia.correlativaBloqueante && !aprobada && !inscripta;
+    const bloqueada = !!materia.correlativaBloqueante && !aprobada;
 
     if (filtro === 'aprobadas') return aprobada;
     if (filtro === 'habilitadas') return !bloqueada && !aprobada;
@@ -98,10 +73,8 @@ function InscripcionesEstudiante() {
 
   const handleConfirmarInscripcion = () => {
     if (!materiaModal) return;
-    setMaterias((actuales) =>
-      actuales.map((materia) => (materia.id === materiaModal.id ? { ...materia, estado: 'R' } : materia))
-    );
-    setAviso(`Te has inscripto a la materia: ${materiaModal.nombre}.`);
+    inscribir(materiaModal.id);
+    setAviso(`Te inscribiste a ${materiaModal.nombre}. La podés ver en Mis Inscripciones.`);
     cerrarModal();
   };
 

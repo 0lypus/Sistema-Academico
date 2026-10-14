@@ -344,9 +344,8 @@
 	align-items: flex-start;
 	justify-content: space-between;
 	gap: var(--ds-space-4);
-	margin-bottom: var(--ds-space-5);
+	margin-bottom: var(--ds-space-6);
 	background: transparent;
-
 }
 
 .inscripciones-header h1 {
@@ -386,6 +385,18 @@
 .periodo-card strong {
 	color: var(--ds-text-primary);
 	font: 500 14px 'DM Sans', sans-serif;
+}
+
+/* Espacio entre tabla de periodo de inscripcion y una linea separadora que antes colisionaban */
+.estudiante-dashboard .inscripciones-header {
+	height: auto;
+	min-height: 0;
+	padding: 0 0 var(--ds-space-4); /* aire entre la tarjeta y la línea */
+	border: 0;
+	border-bottom: var(--ds-border-width) solid var(--ds-border);
+	box-shadow: none;
+	background: transparent;
+	margin-bottom: var(--ds-space-4);
 }
 
 /* Pestañas */
@@ -681,6 +692,36 @@
 }
 
 .modal-boton--primario:hover {
+	border-color: var(--ds-primary);
+	background: var(--ds-primary);
+}
+
+
+
+/*Mis Inscripciones*/
+.badge--inscripta {
+	background: var(--ds-primary-light);
+	color: #fff;
+}
+
+.estado-vacio p {
+	max-width: 320px;
+}
+
+.boton-primario {
+	margin-top: var(--ds-space-4);
+	padding: 10px var(--ds-space-5);
+	border: var(--ds-border-width) solid var(--ds-secondary);
+	border-radius: var(--ds-radius-md);
+	background: var(--ds-secondary);
+	box-shadow: var(--ds-shadow-sm);
+	color: #fff;
+	font: 500 14px 'DM Sans', sans-serif;
+	cursor: pointer;
+	transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.boton-primario:hover {
 	border-color: var(--ds-primary);
 	background: var(--ds-primary);
 }

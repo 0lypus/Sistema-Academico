@@ -1,8 +1,8 @@
-import { ChevronRight, ClipboardList, GraduationCap, Grid2X2, Settings, UserRound, Users, X } from 'lucide-react';
+import { ChevronRight, ClipboardCheck, ClipboardList, GraduationCap, Grid2X2, Settings, UserRound, Users, X } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import icgbLogo from '../../assets/icgb-logo.svg';
 
-const ICONS = { Grid2X2, GraduationCap, ClipboardList, Users, UserRound };
+const ICONS = { Grid2X2, GraduationCap, ClipboardList, ClipboardCheck, Users, UserRound };
 const MENU_POR_ROL = {
   secretario: [
     { label: 'Inicio', path: '/secretario/inicio', icon: 'Grid2X2' },
@@ -13,6 +13,7 @@ const MENU_POR_ROL = {
   estudiante: [
     { label: 'Inicio', path: '/estudiante/inicio', icon: 'Grid2X2' },
     { label: 'Inscripción a Materias', path: '/estudiante/inscripciones', icon: 'ClipboardList' },
+    { label: 'Mis Inscripciones', path: '/estudiante/mis-inscripciones', icon: 'ClipboardCheck' },
   ],
 };
 
