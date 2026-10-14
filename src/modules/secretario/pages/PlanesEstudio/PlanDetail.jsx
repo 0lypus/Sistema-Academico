@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { ChevronRight, FileText, Plus } from 'lucide-react';
+import { ChevronRight, FileText, Pencil, Plus, Trash2 } from 'lucide-react';
 import CargarMaterias from './LoadSubjects';
+import EditSubjectModal from './EditSubjectModal';
 
 const tabs = ['Resumen', 'Materias', 'Materias por año', 'Correlatividades'];
 const YEARS = ['1°', '2°', '3°'];
@@ -19,10 +20,21 @@ function PlanDetalle({ plan, onBack }) {
   const [isLoadingSubjects, setIsLoadingSubjects] = useState(false);
   const [materias, setMaterias] = useState([]);
   const [selectedYear, setSelectedYear] = useState('1°');
+  const [editingSubject, setEditingSubject] = useState(null);
 
   const handleSaveSubjects = (newSubjects) => {
     setMaterias((current) => [...current, ...newSubjects]);
     setIsLoadingSubjects(false);
+  };
+
+  const handleUpdateSubject = (updatedSubject) => {
+    setMaterias((current) => current.map((materia) => (materia.id === updatedSubject.id ? updatedSubject : materia)));
+    setEditingSubject(null);
+  };
+
+  const handleDeleteSubject = (subject) => {
+    if (!window.confirm(`¿Eliminar la materia "${subject.materia}"?`)) return;
+    setMaterias((current) => current.filter((materia) => materia.id !== subject.id));
   };
 
   if (isLoadingSubjects) {
@@ -89,6 +101,7 @@ function PlanDetalle({ plan, onBack }) {
                 <span>Régimen</span>
                 <span>Hs. cátedra</span>
                 <span>Hs. reloj</span>
+                <span>Acciones</span>
               </div>
               {[...materias]
                 .sort((a, b) => Number(a.orden) - Number(b.orden))
@@ -101,6 +114,14 @@ function PlanDetalle({ plan, onBack }) {
                     <span>{materia.regimen}</span>
                     <span>{materia.horasCatedra}</span>
                     <span>{materia.horasReloj}</span>
+                    <span className="plan-materias-actions">
+                      <button type="button" className="subject-edit-button" aria-label={`Editar ${materia.materia}`} onClick={() => setEditingSubject(materia)}>
+                        <Pencil size={16} />
+                      </button>
+                      <button type="button" className="subject-delete-button" aria-label={`Eliminar ${materia.materia}`} onClick={() => handleDeleteSubject(materia)}>
+                        <Trash2 size={16} />
+                      </button>
+                    </span>
                   </div>
                 ))}
             </div>
@@ -207,6 +228,14 @@ function PlanDetalle({ plan, onBack }) {
       </div>
 
       {renderContent()}
+
+      {editingSubject && (
+        <EditSubjectModal
+          subject={editingSubject}
+          onClose={() => setEditingSubject(null)}
+          onSave={handleUpdateSubject}
+        />
+      )}
     </section>
   );
 }
