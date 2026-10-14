@@ -12,7 +12,7 @@ function PlanCard({ plan, onToggleStatus, onViewSubjects }) {
             {activo ? 'Activo' : 'Archivado'}
           </span>
           <h3 className="plan-card-title">{codigo} – {nombre}</h3>
-          <p className="plan-card-years">{añoInicio} - {añoFin}</p>
+          <p className="plan-card-years">{añoFin ? `${añoInicio} - ${añoFin}` : `Desde ${añoInicio}`}</p>
         </div>
       </div>
 

@@ -57,7 +57,7 @@ function PlanDetalle({ plan, onBack }) {
             <Field label="Nombre del plan" value={plan.nombre} />
             <Field label="Código" value={plan.codigo} />
             <Field label="Año de inicio del plan de estudio" value={plan.añoInicio} />
-            <Field label="Año de finalización del plan de estudio" value={plan.añoFin} />
+            <Field label="Año de finalización del plan de estudio" value={plan.añoFin ?? 'Sin definir'} />
             <Field label="Duración de la carrera" value={plan.duracion} />
             <Field label="Modalidad de la carrera" value={plan.modalidad} />
             <Field label="Carga horaria total" value={plan.cargaHoraria} />
