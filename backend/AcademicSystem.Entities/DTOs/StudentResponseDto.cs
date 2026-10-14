@@ -1,6 +1,4 @@
-<<<<<<< HEAD
 namespace AcademicSystem.Entities.DTOs;
-
 public class StudentResponseDto
 {
     private int id;
@@ -20,6 +18,3 @@ public class StudentResponseDto
     public string Dni { get { return dni; } set { dni = value; } }
     public string RecordNumber { get { return recordNumber; } set { recordNumber = value; } }
 }
-=======
-public record StudentResponseDto(string FirstName, string LastName, string Dni, string RecordNumber);
->>>>>>> 4312845 (Consultar materias disponibles)
