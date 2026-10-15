@@ -1,5 +1,6 @@
 using AcademicSystem.Entities.DTOs;
 using AcademicSystem.Entities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AcademicSystem.Business.Services;
 
@@ -7,6 +8,7 @@ namespace AcademicSystem.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Roles = RoleNames.AcademicSecretary)]
 public class SubjectController : ControllerBase
 {
     private readonly ISubjectService _subjectService;
