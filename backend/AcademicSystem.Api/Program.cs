@@ -56,6 +56,10 @@ builder.Services.AddAuthorization(options =>
         .Build();
 });
 
+builder.Services.AddScoped<IStudyPlanService, StudyPlanService>();
+
+builder.Services.AddScoped<ISubjectService, SubjectService>();
+
 // Lets the React frontend (Vite, http://localhost:5173) call this API.
 const string FrontendCorsPolicy = "Frontend";
 var frontendOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
