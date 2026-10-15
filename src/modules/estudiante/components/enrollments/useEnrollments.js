@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'Sistema-Academico\src\api\httpClient.js';
 
 export function useEnrollments(planId) {
   const [years, setYears] = useState([
