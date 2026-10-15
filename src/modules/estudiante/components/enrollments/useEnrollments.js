@@ -13,9 +13,9 @@ export function useEnrollments(planId) {
   ]);
   
   const [summaries, setSummaries] = useState([
-    { aÃ±oAcademico: '1', totalEstudiantes: 45, estudiantesSinAsignar: 5 },
-    { aÃ±oAcademico: '2', totalEstudiantes: 32, estudiantesSinAsignar: 2 },
-    { aÃ±oAcademico: '3', totalEstudiantes: 28, estudiantesSinAsignar: 0 },
+    { añoAcademico: '1', totalEstudiantes: 45, estudiantesSinAsignar: 5 },
+    { añoAcademico: '2', totalEstudiantes: 32, estudiantesSinAsignar: 2 },
+    { añoAcademico: '3', totalEstudiantes: 28, estudiantesSinAsignar: 0 },
   ]);
 
   return { years, plans, summaries };
