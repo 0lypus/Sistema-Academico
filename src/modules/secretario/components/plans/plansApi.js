@@ -1,49 +1,105 @@
-import { createMockRepository } from '../../../../api/createMockRepository';
-
-const initialPlans = [
-  {
-    id: 1,
-    nombre: 'Tecnicatura en Desarrollo de Software',
-    codigo: 'PE01',
-    añoInicio: 2022,
-    añoFin: 2030,
-    duracion: '3 años',
-    modalidad: 'Presencial',
-    cargaHoraria: '1623 horas reloj',
-    regimen: 'Anual / Cuatrimestral',
-    activo: true,
-  },
-  {
-    id: 2,
-    nombre: 'Licenciatura en Desarrollo de Software',
-    codigo: 'PE02',
-    añoInicio: 2025,
-    añoFin: 2032,
-    duracion: '5 años',
-    modalidad: 'Presencial',
-    cargaHoraria: '2603 horas reloj',
-    regimen: 'Anual / Cuatrimestral',
-    activo: true,
-  },
-  {
-    id: 3,
-    nombre: 'Tecnicatura en Desarrollo de Software',
-    codigo: 'PE03',
-    añoInicio: 2018,
-    añoFin: 2022,
-    duracion: '3 años',
-    modalidad: 'Presencial',
-    cargaHoraria: '1600 horas reloj',
-    regimen: 'Anual / Cuatrimestral',
-    activo: false,
-  },
-];
-
-const mockRepository = createMockRepository(initialPlans);
-
+import { request } from '../../../../api/httpClient';
+ 
+// Régimen de una materia en el front <-> cuatrimestre (term) en el backend: vacío = anual
+const REGIMEN_A_TERM = { 'Anual': null, '1.º cuatrimestre': 1, '2.º cuatrimestre': 2 };
+ 
+const termARegimen = (term) => {
+  if (term === 1) return '1.º cuatrimestre';
+  if (term === 2) return '2.º cuatrimestre';
+  return 'Anual';
+};
+ 
+// plan: backend -> frontend
+const adaptarPlan = (plan) => ({
+  id: plan.id,
+  nombre: plan.name,
+  codigo: plan.planCode,
+  añoInicio: plan.startYear,
+  añoFin: plan.endYear,
+  duracion: plan.careerDurationYears != null ? `${plan.careerDurationYears} años` : null,
+  modalidad: plan.attendanceMode,
+  cargaHoraria: plan.totalWorkloadHours != null ? `${plan.totalWorkloadHours} horas reloj` : null,
+  activo: plan.isActive,
+});
+ 
+// plan: frontend -> backend
+const prepararPlan = (plan) => ({
+  name: plan.nombre,
+  planCode: plan.codigo,
+  careerDurationYears: Number.parseInt(plan.duracion, 10) || null,
+  attendanceMode: plan.modalidad,
+  totalWorkloadHours: Number.parseInt(plan.cargaHoraria, 10) || null,
+  startYear: Number(plan.añoInicio),
+  endYear: plan.añoFin ? Number(plan.añoFin) : null,
+  isActive: Boolean(plan.activo),
+});
+ 
+// materia de un plan: backend -> frontend
+const adaptarMateria = (planSubject) => ({
+  id: planSubject.id,
+  orden: planSubject.subject.orderNumber,
+  formato: planSubject.subject.format,
+  materia: planSubject.subject.name,
+  anio: `${planSubject.courseYear}°`,
+  regimen: termARegimen(planSubject.term),
+  horasCatedra: planSubject.subject.lectureHours,
+  horasReloj: planSubject.subject.totalHours,
+});
+ 
 export const plansApi = {
-  obtenerPlanes: async () => mockRepository.list(),
-  crearPlan: async (plan) => mockRepository.create(plan),
-  actualizarPlan: async (id, plan) => mockRepository.update(id, plan),
-  eliminarPlan: async (id) => mockRepository.remove(id),
+  obtenerPlanes: async () => {
+    const planes = await request('/api/StudyPlan');
+    return planes.map(adaptarPlan);
+  },
+ 
+  // devuelve el plan con sus materias (ordenadas por año y cuatrimestre desde el backend)
+  obtenerPlanPorId: async (id) => {
+    const plan = await request(`/api/StudyPlan/${id}`);
+    return { ...adaptarPlan(plan), materias: plan.subjects.map(adaptarMateria) };
+  },
+ 
+  crearPlan: async (plan) => {
+    const nuevoPlan = await request('/api/StudyPlan', {
+      method: 'POST',
+      body: JSON.stringify(prepararPlan(plan)),
+    });
+    return adaptarPlan(nuevoPlan);
+  },
+ 
+  // el PUT reemplaza todos los campos: siempre hay que enviar el plan completo
+  actualizarPlan: async (id, plan) => {
+    const planActualizado = await request(`/api/StudyPlan/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(prepararPlan(plan)),
+    });
+    return adaptarPlan(planActualizado);
+  },
+ 
+  // el backend todavía no tiene DELETE; ManagementPage.jsx (Docentes) usa esta función
+  eliminarPlan: async () => {
+    throw new Error('Eliminar planes todavía no está disponible.');
+  },
+ 
+  // una fila de la grilla = crear la materia + agregarla al plan
+  agregarMateria: async (planId, fila) => {
+    const materia = await request('/api/Subject', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: fila.materia,
+        orderNumber: Number(fila.orden),
+        format: fila.formato,
+        lectureHours: Number(fila.horasCatedra),
+        totalHours: Number(fila.horasReloj),
+      }),
+    });
+ 
+    await request(`/api/StudyPlan/${planId}/subjects`, {
+      method: 'POST',
+      body: JSON.stringify({
+        subjectId: materia.id,
+        courseYear: Number.parseInt(fila.anio, 10),
+        term: REGIMEN_A_TERM[fila.regimen],
+      }),
+    });
+  },
 };
