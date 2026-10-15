@@ -19,7 +19,7 @@ function LoginPage({ onLogin }) {
 
   const validar = () => {
     const nuevos = {};
-    if (!usuario.trim()) nuevos.usuario = 'Ingresá tu usuario.';
+    if (!usuario.trim()) nuevos.usuario = 'Ingresá tu correo.';
     if (!password) nuevos.password = 'Ingresá tu contraseña.';
     setErrores(nuevos);
     return Object.keys(nuevos).length === 0;
@@ -62,7 +62,7 @@ function LoginPage({ onLogin }) {
       <div className="login__contenido">
         <form className="login__form" onSubmit={handleSubmit} noValidate>
           <h1>Iniciar sesión</h1>
-          <p className="login__sub">Ingresá con tu usuario institucional para continuar.</p>
+          <p className="login__sub">Ingresá con tu correo institucional para continuar.</p>
 
           {sesionExpirada && !errorGeneral && (
             <div className="login__aviso" role="status">
@@ -76,10 +76,10 @@ function LoginPage({ onLogin }) {
             </div>
           )}
 
-          <label htmlFor="usuario">Usuario</label>
+          <label htmlFor="usuario">Correo</label>
           <div className={`login__campo ${errores.usuario ? 'login__campo--error' : ''}`}>
             <User size={18} />
-            <input id="usuario" value={usuario} onChange={(e) => setUsuario(e.target.value)} placeholder="Ej: fpetta26" />
+            <input id="usuario" type="email" autoComplete="email" value={usuario} onChange={(e) => setUsuario(e.target.value)} placeholder="Ej: nombre@uni.edu" />
           </div>
           {errores.usuario && <small className="login__error">{errores.usuario}</small>}
 

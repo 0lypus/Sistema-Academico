@@ -137,7 +137,7 @@ Sistema-Academico/
 - `routes/App.jsx`: router principal, control de acceso, protección por perfil y pantalla de acceso denegado.
 - `auth/session.js`: guarda, obtiene y borra la sesión/token; gestiona vencimiento de sesión.
 - `auth/roles.js`: traduce roles del backend (`Student`, `AcademicSecretary`) a perfiles de navegación.
-- `auth/permisos,js`: configuración del menú por perfil. El nombre del archivo contiene una coma; conservá ese nombre al importarlo hasta que se acuerde corregirlo.
+- `auth/permisos.js`: configuración del menú por perfil.
 - `auth/useExpiracionSesion.js`: hook asociado al vencimiento de sesión.
 - `router/withSuspense.jsx`: envoltorio para cargar módulos lazy con `Suspense`.
 - `layouts/AppLayout.jsx`, `Header.jsx`, `Sidebar.jsx`: marco visual autenticado y navegación.
@@ -384,7 +384,7 @@ Vitest busca pruebas bajo `src/**/*.test.js` y `src/**/*.test.jsx`. El workflow 
 
 1. Confirmar el equipo/perfil y el módulo propietario del cambio.
 2. Crear o actualizar la pantalla dentro de `src/modules/<perfil>/pages/`.
-3. Agregar su ruta en `secretarioRoutes.jsx` o `estudianteRoutes.jsx` y, si corresponde, su entrada de menú en `src/core/auth/permisos,js`.
+3. Agregar su ruta en `secretarioRoutes.jsx` o `estudianteRoutes.jsx` y, si corresponde, su entrada de menú en `src/core/auth/permisos.js`.
 4. Mantener la lógica de solicitudes en `src/api/` o en el API del módulo; evitar fetch directo disperso por componentes.
 5. Reutilizar los hooks y componentes existentes si su contrato coincide.
 6. Agregar o actualizar estilos bajo `src/styles/` siguiendo el patrón del módulo.
