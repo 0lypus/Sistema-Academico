@@ -12,6 +12,7 @@ const MENU_POR_ROL = {
   estudiante: [
     { label: 'Inicio', path: '/estudiante/inicio', icon: 'Grid2X2', habilitado: true },
     { label: 'Inscripción a Materias', path: '/estudiante/inscripciones', icon: 'ClipboardList', habilitado: true },
+    { label: 'Mis Inscripciones', path: '/estudiante/mis-inscripciones', icon: 'ClipboardList', habilitado: true },
   ],
 };
 
