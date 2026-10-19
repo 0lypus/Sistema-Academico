@@ -69,11 +69,6 @@ export const plansApi = {
     return adaptarPlan(planActualizado);
   },
  
-  // el backend todavía no tiene DELETE; ManagementPage.jsx (Docentes) usa esta función
-  eliminarPlan: async () => {
-    throw new Error('Eliminar planes todavía no está disponible.');
-  },
- 
   // una fila de la grilla = crear la materia + agregarla al plan
   agregarMateria: async (planId, fila) => {
     const materia = await subjectService.crear({
