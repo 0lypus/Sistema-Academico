@@ -1,4 +1,4 @@
-import { request } from './httpClient';
+import { request } from '../httpClient';
 
 // StudentsController: /api/students (solo Secretario)
 export const studentsService = {

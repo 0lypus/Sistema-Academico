@@ -1,4 +1,4 @@
-import { request } from './httpClient';
+import { request } from '../httpClient';
 
 // AcademicSecretariesController: /api/academic-secretaries (solo Secretario)
 export const academicSecretariesService = {
