@@ -17,9 +17,9 @@ Actualizado al 19/10/2026. Esto es lo que ya está integrado en `development`:
 | **E1** — Acceso e Integración | Login con correo y contraseña, cierre y vencimiento de sesión, roles y permisos, menú por rol y la API de usuarios. | Pantalla de gestión de usuarios y recuperación de contraseña. |
 | **E2** — Secretaría | Todavía nada: su trabajo está en el fork y no abrió el Pull Request. | Abrir el Pull Request hacia `development`. |
 | **E3** — Gestión Académica | API y pantallas de planes de estudio y materias, solo para el Secretario. | Correlatividades, guardar las materias desde el detalle del plan y las bajas. |
-| **E4** — Inscripciones | Pantallas de inscripción y "Mis inscripciones" con datos de prueba, y los endpoints de materias disponibles y validación de correlativas. | Registrar sus servicios en `Program.cs`, conectar las pantallas a la API y guardar la inscripción. |
+| **E4** — Inscripciones | Pantallas de inscripción y "Mis inscripciones", todavía vacías, y los endpoints de materias disponibles y validación de correlativas. | Registrar sus servicios en `Program.cs`, conectar las pantallas a la API y guardar la inscripción. |
 
-Las llamadas del frontend a la API ahora van en la carpeta `src/services/`, con un archivo por cada controller del backend: [cómo usarla](#cómo-llamar-a-la-api-desde-el-frontend).
+Ya no hay datos simulados: lo que todavía no está conectado a la API aparece vacío. Las llamadas a la API van en `src/services/`, con un archivo por cada controller del backend: [cómo usarla](#cómo-llamar-a-la-api-desde-el-frontend).
 
 ---
 
@@ -112,7 +112,7 @@ npm install
 npm run dev
 ```
 
-Se abre en **http://localhost:5173**. Necesitás **Node.js 20 o superior**. Para iniciar sesión tiene que estar corriendo el backend: seguí [Base de datos y backend](#base-de-datos-y-backend). Si solo querés mirar pantallas con datos de prueba, usá el [simulador de roles](#ver-las-pantallas-sin-iniciar-sesión).
+Se abre en **http://localhost:5173**. Necesitás **Node.js 20 o superior**. Para entrar hay que iniciar sesión, así que también tiene que estar corriendo el backend: seguí [Base de datos y backend](#base-de-datos-y-backend).
 
 ### ¿Ya tenías el proyecto en tu computadora?
 
@@ -229,16 +229,6 @@ Se crean solos al levantar el backend en desarrollo:
 | Secretario | maria@uni.edu | admin |
 | Estudiante | loko@uni.edu | 1234 |
 
-### Ver las pantallas sin iniciar sesión
-
-Para probar pantallas con datos simulados sin levantar el backend, agregá esta línea a tu `.env.local`:
-
-```
-VITE_ENABLE_ROLE_SIMULATOR=true
-```
-
-Solo funciona con `npm run dev`. La versión que se entrega siempre pide login.
-
 ### Si tu SQL Server tiene otro nombre
 
 El backend se conecta a `localhost\SQLEXPRESS`. Si tu servidor se llama distinto, **no cambies `appsettings.json`**: ese cambio les rompe la conexión a todos los demás. Guardá tu conexión solo en tu computadora con este comando, cambiando la parte de `Server`:
@@ -262,21 +252,21 @@ Después reiniciá `npm run dev`. Ese archivo no se sube al repositorio.
 
 ### Cómo llamar a la API desde el frontend
 
-Todas las llamadas a la API pasan por la carpeta `src/services/`. Hay un archivo por cada controller del backend:
+Todas las llamadas a la API pasan por `src/services/`. Hay un archivo por cada controller del backend. Los que pertenecen a un solo model van en su carpeta: `estudiante/` y `secretario/`.
 
-| Service | Controller | Para qué |
+| Archivo | Controller | Para qué |
 |---|---|---|
-| `authService` | `AuthController` | Iniciar sesión |
-| `permissionsService` | `PermissionsController` | Permisos del usuario logueado |
-| `healthService` | `HealthController` | Estado de la API |
-| `usersService` | `UsersController` | Usuarios |
-| `studentsService` | `StudentsController` | Estudiantes |
-| `academicSecretariesService` | `AcademicSecretariesController` | Secretarios |
-| `rolesService` | `RolesController` | Roles |
-| `studyPlanService` | `StudyPlanController` | Planes de estudio |
-| `subjectService` | `SubjectController` | Materias |
-| `enrollmentService` | `EnrollmentController` | Materias disponibles para inscribirse |
-| `prerequisiteValidationService` | `PrerequisiteValidationController` | Validar correlativas |
+| `authService.js` | `AuthController` | Iniciar sesión |
+| `permissionsService.js` | `PermissionsController` | Permisos del usuario logueado |
+| `healthService.js` | `HealthController` | Estado de la API |
+| `usersService.js` | `UsersController` | Usuarios |
+| `rolesService.js` | `RolesController` | Roles |
+| `studyPlanService.js` | `StudyPlanController` | Planes de estudio |
+| `subjectService.js` | `SubjectController` | Materias |
+| `enrollmentService.js` | `EnrollmentController` | Materias disponibles para inscribirse |
+| `prerequisiteValidationService.js` | `PrerequisiteValidationController` | Validar correlativas |
+| `estudiante/studentsService.js` | `StudentsController` | Estudiantes |
+| `secretario/academicSecretariesService.js` | `AcademicSecretariesController` | Secretarios |
 
 Para usarlo desde una pantalla:
 
@@ -286,10 +276,10 @@ import { studyPlanService } from '../../../../services/studyPlanService';
 const planes = await studyPlanService.obtenerTodos();
 ```
 
-- **Si tu equipo crea un controller nuevo**, creá su service en `src/services/` con el mismo nombre, por ejemplo `ComisionesController` → `comisionesService.js`. Copiá la forma de `usersService.js`.
+- **Si tu equipo crea un controller nuevo**, creá su service en `src/services/` con el mismo nombre, por ejemplo `ComisionesController` → `comisionesService.js`. Copiá la forma de `usersService.js`. Si es de un solo model, va en su carpeta.
 - **Las pantallas no llaman a `fetch` directo.** Pueden tener un archivo propio para adaptar los datos, como `plansApi.js` del E3, pero ese archivo usa los services.
-- **`httpClient.js` arma cada pedido:** agrega la dirección de la API y el token de la sesión, y si la sesión venció te manda al login. Lo mantiene el E1.
-- **`createMockRepository.js`** sirve para las pantallas que todavía usan datos de prueba.
+- **`httpClient.js` arma cada pedido:** agrega la dirección de la API y el token de la sesión, y si la sesión venció te manda al login. Lo usan todos los services y lo mantiene el E1.
+- **No se cargan datos inventados en las pantallas.** Mientras tu endpoint no exista, la pantalla muestra que no hay datos.
 
 ### Cómo está armado el backend
 
@@ -321,19 +311,22 @@ dotnet ef dbcontext scaffold "Name=ConnectionStrings:AcademicSystem" Microsoft.E
 
 ```
 src/
-├── core/        → layout, menú y ruteo. Lo mantiene el E1.
-├── services/    → llamadas a la API: un archivo por cada controller, más httpClient.js.
-├── hooks/       → funciones reutilizables (useCrud). Lo mantiene el E1.
+├── core/        → layout, menú, sesión y ruteo. Lo mantiene el E1.
+├── hooks/       → funciones reutilizables (useAsyncResource). Lo mantiene el E1.
 ├── modules/
+│   ├── auth/pages/         → login y acceso denegado (E1)
 │   ├── secretario/pages/   → pantallas del Secretario (E2 y E3)
 │   └── estudiante/pages/   → pantallas del Estudiante (E4)
+├── services/    → un archivo por cada controller del backend, más httpClient.js
+│   ├── estudiante/         → studentsService.js
+│   └── secretario/         → academicSecretariesService.js
 └── styles/      → estilos compartidos
 ```
 
 | Equipo | Qué hace | Su rama | Dónde trabaja |
 |---|---|---|---|
 | **E1** — Acceso e Integración | Login, usuarios, roles, permisos, integrar todo | `e1` | `src/core/`, `src/services/httpClient.js`, `src/hooks/` |
-| **E2** — Secretaría | Inscripción a 1.º año, docentes, estudiantes por comisión | `e2` | `src/modules/secretario/pages/Docentes/` e `.../Inscripciones/` |
+| **E2** — Secretaría | Inscripción a 1.º año, docentes, estudiantes por comisión | `e2` | `src/modules/secretario/pages/Inscripciones/` y una carpeta nueva para Docentes |
 | **E3** — Gestión Académica | Planes de estudio, materias, correlatividades | `e3` | `src/modules/secretario/pages/PlanesEstudio/` |
 | **E4** — Inscripciones | Consulta de materias e inscripción a 2.º y 3.º | `e4` | `src/modules/estudiante/pages/Inscripciones/` |
 
