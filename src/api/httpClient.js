@@ -9,6 +9,21 @@ export class ApiError extends Error {
   }
 }
 
+async function leerMensajeDeError(response) {
+  try {
+    const texto = await response.text();
+    if (!texto) return null;
+    try {
+      const datos = JSON.parse(texto);
+      return datos.message ?? datos.title ?? null;
+    } catch {
+      return texto.length < 200 ? texto : null;
+    }
+  } catch {
+    return null;
+  }
+}
+
 export async function request(path, options = {}) {
   if (!API_BASE_URL) {
     throw new Error('No hay una API configurada. Definí VITE_API_BASE_URL para usar el backend.');
@@ -29,7 +44,8 @@ export async function request(path, options = {}) {
     if (response.status === 401 && token && path !== '/api/auth/login') {
       expirarSesion();
     }
-    throw new ApiError(`La API respondió con ${response.status}.`, response.status);
+    const mensaje = await leerMensajeDeError(response);
+    throw new ApiError(mensaje ?? `La API respondió con ${response.status}.`, response.status);
   }
 
   return response.status === 204 ? undefined : response.json();
