@@ -1,4 +1,5 @@
-import { request } from '../../../../api/httpClient';
+import { studyPlanService } from '../../../../services/studyPlanService';
+import { subjectService } from '../../../../services/subjectService';
  
 // Régimen de una materia en el front <-> cuatrimestre (term) en el backend: vacío = anual
 const REGIMEN_A_TERM = { 'Anual': null, '1.º cuatrimestre': 1, '2.º cuatrimestre': 2 };
@@ -48,30 +49,23 @@ const adaptarMateria = (planSubject) => ({
  
 export const plansApi = {
   obtenerPlanes: async () => {
-    const planes = await request('/api/StudyPlan');
+    const planes = await studyPlanService.obtenerTodos();
     return planes.map(adaptarPlan);
   },
  
   // devuelve el plan con sus materias (ordenadas por año y cuatrimestre desde el backend)
   obtenerPlanPorId: async (id) => {
-    const plan = await request(`/api/StudyPlan/${id}`);
+    const plan = await studyPlanService.obtenerPorId(id);
     return { ...adaptarPlan(plan), materias: plan.subjects.map(adaptarMateria) };
   },
  
   crearPlan: async (plan) => {
-    const nuevoPlan = await request('/api/StudyPlan', {
-      method: 'POST',
-      body: JSON.stringify(prepararPlan(plan)),
-    });
+    const nuevoPlan = await studyPlanService.crear(prepararPlan(plan));
     return adaptarPlan(nuevoPlan);
   },
  
-  // el PUT reemplaza todos los campos: siempre hay que enviar el plan completo
   actualizarPlan: async (id, plan) => {
-    const planActualizado = await request(`/api/StudyPlan/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(prepararPlan(plan)),
-    });
+    const planActualizado = await studyPlanService.actualizar(id, prepararPlan(plan));
     return adaptarPlan(planActualizado);
   },
  
@@ -82,24 +76,18 @@ export const plansApi = {
  
   // una fila de la grilla = crear la materia + agregarla al plan
   agregarMateria: async (planId, fila) => {
-    const materia = await request('/api/Subject', {
-      method: 'POST',
-      body: JSON.stringify({
-        name: fila.materia,
-        orderNumber: Number(fila.orden),
-        format: fila.formato,
-        lectureHours: Number(fila.horasCatedra),
-        totalHours: Number(fila.horasReloj),
-      }),
+    const materia = await subjectService.crear({
+      name: fila.materia,
+      orderNumber: Number(fila.orden),
+      format: fila.formato,
+      lectureHours: Number(fila.horasCatedra),
+      totalHours: Number(fila.horasReloj),
     });
  
-    await request(`/api/StudyPlan/${planId}/subjects`, {
-      method: 'POST',
-      body: JSON.stringify({
-        subjectId: materia.id,
-        courseYear: Number.parseInt(fila.anio, 10),
-        term: REGIMEN_A_TERM[fila.regimen],
-      }),
+    await studyPlanService.agregarMateria(planId, {
+      subjectId: materia.id,
+      courseYear: Number.parseInt(fila.anio, 10),
+      term: REGIMEN_A_TERM[fila.regimen],
     });
   },
 };

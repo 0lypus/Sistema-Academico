@@ -1,4 +1,4 @@
-import { createMockRepository } from '../../../../api/createMockRepository';
+import { createMockRepository } from '../../../../services/createMockRepository';
 
 const initialTeachers = [
   { id: 1, nombreCompleto: 'Juan Pérez', dni: '27.123.456', correo: 'juan.perez@instituto.edu.ar', activo: true },

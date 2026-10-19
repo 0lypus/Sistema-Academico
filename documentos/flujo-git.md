@@ -168,7 +168,7 @@ Escribí tu código **en la carpeta de tu equipo**:
 
 | Equipo | Dónde crea sus pantallas |
 |---|---|
-| E1 | `src/core/`, `src/api/`, `src/hooks/` |
+| E1 | `src/core/`, `src/services/httpClient.js`, `src/hooks/` |
 | E2 | `src/modules/secretario/pages/Docentes/`, `src/modules/secretario/pages/Inscripciones/` |
 | E3 | `src/modules/secretario/pages/PlanesEstudio/` |
 | E4 | `src/modules/estudiante/pages/Inscripciones/` |

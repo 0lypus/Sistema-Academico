@@ -32,9 +32,10 @@ Sistema Académico/
 │   └── continuacion.md
 ├── src/
 │   ├── main.jsx
-│   ├── api/
+│   ├── services/
+│   │   ├── httpClient.js
 │   │   ├── createMockRepository.js
-│   │   └── httpClient.js
+│   │   └── <nombre>Service.js   (uno por controller del backend)
 │   ├── assets/
 │   ├── core/
 │   │   ├── components/
@@ -117,7 +118,7 @@ La aplicación usa una separación funcional por roles y por módulos, con un sh
 - `src/modules/.../pages`: pantallas específicas del dominio.
 - `src/modules/.../components`: componentes orientados al dominio.
 - `src/hooks/useCrud.js`: patrón reusable para carga y mutaciones de registros.
-- `src/api/createMockRepository.js`: repositorio en memoria con comportamiento CRUD simulando backend.
+- `src/services/createMockRepository.js`: repositorio en memoria con comportamiento CRUD simulando backend.
 
 La navegación actual no se define en un único archivo global de páginas, sino en archivos de rutas asociados a cada módulo, y la selección del rol se resuelve desde un simulador de interfaz. Ese patrón debe mantenerse como base para continuar creciendo.
 

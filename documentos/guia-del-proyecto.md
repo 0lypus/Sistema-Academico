@@ -77,7 +77,6 @@ Sistema-Academico/
 │   ├── integracion-y-releases.md
 │   └── configuracion-github.md
 ├── src/
-│   ├── api/
 │   ├── assets/
 │   ├── core/
 │   ├── data/
@@ -86,6 +85,7 @@ Sistema-Academico/
 │   │   ├── auth/
 │   │   ├── estudiante/
 │   │   └── secretario/
+│   ├── services/
 │   ├── styles/
 │   └── main.jsx
 ├── .env.example
@@ -165,11 +165,11 @@ Sistema-Academico/
   - `pages/Inscripciones/components/MateriaInscripcionCard.jsx`: tarjeta reutilizable de materia.
   - `components/enrollments/useEnrollments.js`: datos locales de ejemplo para inscripciones.
 
-#### `src/api/`, `src/hooks/` y `src/data/`
+#### `src/services/`, `src/hooks/` y `src/data/`
 
-- `api/httpClient.js`: función `request`, construye solicitudes HTTP usando `VITE_API_BASE_URL`, adjunta el token y representa errores HTTP con `ApiError`.
-- `api/authApi.js`: operación de login que llama a `/api/auth/login`.
-- `api/createMockRepository.js`: CRUD asíncrono en memoria para prototipos; los cambios se pierden al recargar la página.
+- `services/httpClient.js`: función `request`, construye solicitudes HTTP usando `VITE_API_BASE_URL`, adjunta el token y representa errores HTTP con `ApiError`.
+- `services/<nombre>Service.js`: un archivo por cada controller del backend (`authService`, `usersService`, `studyPlanService`, `subjectService`, `enrollmentService`, etc.). Cada función llama a un endpoint con `request`.
+- `services/createMockRepository.js`: CRUD asíncrono en memoria para prototipos; los cambios se pierden al recargar la página.
 - `hooks/useAsyncResource.js`: estado común de carga/error y recarga para recursos asíncronos.
 - `hooks/useCrud.js`: estado y acciones CRUD reutilizables para pantallas de gestión.
 - `data/managementData.js`: configuración de columnas y datos/acciones para vistas de gestión.
@@ -262,8 +262,8 @@ El script es la referencia para la forma de la base. Revisá restricciones y rel
 
 ### Inicio de sesión
 
-1. El frontend llama a `login()` en `src/api/authApi.js`.
-2. `request()` en `src/api/httpClient.js` envía `POST /api/auth/login` a la URL configurada y convierte respuestas no exitosas en errores.
+1. El frontend llama a `authService.login()` en `src/services/authService.js`.
+2. `request()` en `src/services/httpClient.js` envía `POST /api/auth/login` a la URL configurada y convierte respuestas no exitosas en errores.
 3. `AuthController` valida la solicitud y llama a `AuthService`.
 4. `AuthService` busca un usuario activo y verifica el hash de la contraseña; limita intentos fallidos.
 5. `JwtTokenService` firma el token. La respuesta entrega perfil y token, no el hash.
@@ -385,7 +385,7 @@ Vitest busca pruebas bajo `src/**/*.test.js` y `src/**/*.test.jsx`. El workflow 
 1. Confirmar el equipo/perfil y el módulo propietario del cambio.
 2. Crear o actualizar la pantalla dentro de `src/modules/<perfil>/pages/`.
 3. Agregar su ruta en `secretarioRoutes.jsx` o `estudianteRoutes.jsx` y, si corresponde, su entrada de menú en `src/core/auth/permisos.js`.
-4. Mantener la lógica de solicitudes en `src/api/` o en el API del módulo; evitar fetch directo disperso por componentes.
+4. Llamar a la API solo a través del service del controller en `src/services/`; evitar fetch directo disperso por componentes.
 5. Reutilizar los hooks y componentes existentes si su contrato coincide.
 6. Agregar o actualizar estilos bajo `src/styles/` siguiendo el patrón del módulo.
 7. Mientras el endpoint no exista, identificar explícitamente los datos como mock. Al migrar a API real, cubrir estados de carga, error y vacío.
